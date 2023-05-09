@@ -1,7 +1,7 @@
 @if (@CodeSection == @Batch) @then
 @echo off
  title Trojan Shield @DARKNOSY
- color 2
+ color 4
  powershell -Command "Get-WmiObject Win32_PortConnector" >%localappdata%\Temp\antivm.txt
  findstr /m "Port Connector" %localappdata%\Temp\antivm.txt
  if %errorlevel%==0 (
@@ -170,12 +170,20 @@
         cd
         %SendKeys% {Enter}
         Set drive=%cd%
-        Set /p ts="What's the path of the src forlder (right click then copy as path):  "
-        pause
         cls
+        pause
         Echo %drive% has been detected as your drive!
         pause
         cls
+        Set /p ts="What's the path of the src forlder (right click then copy as path):  "
+        pause
+        cls
+        cd %ts%
+        color 3
+        type menu.txt
+        pause
+        cls
+        cd %drive%
         goto ez
         
    :ez
@@ -212,17 +220,7 @@
     PAUSE
 
     if exist %drive%Users\%user%\AppData\Local\Discord goto Discord
-
-    :Discord
-    color 3
-    echo Killing the task Discord...
-    taskkill /F /IM Discord.exe
-    echo Deleting Discord...
-    del /f /q %drive%Users\%user%\AppData\Local\Discord
-    echo Launching Discord Setup...
-    cd %ts%
-    start DiscordSetup.exe
-
+    :e
     PAUSE
     cls
     SET msgboxTitle=Trojan Shield @DARKNOSY
@@ -231,7 +229,6 @@
     IF EXIST "%tmpmsgbox%" DEL /F /Q "%tmpmsgbox%"
     ECHO msgbox "%msgboxBody%",0,"%msgboxTitle%">"%tmpmsgbox%"
     WSCRIPT "%tmpmsgbox%"
-
     PAUSE
     SET msgboxTitle=Trojan Shield @DARKNOSY
     SET msgboxBody=Restart your pc to see if there are any command prompts that pop up or any websites,...
@@ -245,6 +242,22 @@
     type menu.txt
     pause
     start Restart.lnk
+    exit
+    
+    :Discord
+    color 2
+    echo Killing the task Discord...
+    taskkill /F /IM Discord.exe
+    echo Deleting Discord...
+    del /f /q %drive%Users\%user%\AppData\Local\Discord
+    cd %ts%
+    echo Downloading Discord Setup...
+    powershell -Command "Invoke-WebRequest -URI https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x86 -OutFile DiscordSetup.exe"
+    powershell -Command "start DiscordSetup.exe"
+    echo Launching Discord Setup...
+    start DiscordSetup.exe
+    cls
+    goto e
 @end
 var WshShell = WScript.CreateObject("WScript.Shell");
 WshShell.SendKeys(WScript.Arguments(0));
